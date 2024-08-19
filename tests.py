@@ -4,6 +4,8 @@ from advanced import *
 from basic import *
 from calc import *
 
+import time
+
 # TODO: improve this barebone test sorta "framework"
 
 printAllTestResults = False
@@ -601,15 +603,49 @@ def do_fullTestsCalc():
     testMultiply()
     testAdvanced()
 
+def bench(opt = -1):
+    def _diffTime(t1, t2):
+        return f"{t2 - t1:.3f}"
+
+    if opt == -1:
+        opt = 4 + 2 + 1
+
+    times = []
+    times.append(("-Global: ", time.time()))
+    if opt - 4 >= 0:
+        opt -= 4
+        do_fullUnitTests()
+        times.append(("-Unit:   ", time.time()))
+    if opt - 2 >= 0:
+        opt -= 2
+        do_fullTestsCalc()
+        times.append(("-Full:   ", time.time()))
+    if opt - 1 >= 0:
+        opt -= 1
+        do_heavyTestingCalc()
+        times.append(("-Heavy:  ", time.time()))
+
+    print("### Bench Results ###")
+    print("#####################")
+    print(times[0][0]+_diffTime(times[0][1], times[-1][1]))
+    prevTime = times[0][1]
+    for t in times[1:]:
+        print(t[0]+_diffTime(prevTime, t[1]))
+        prevTime = t[1]
+
+
 # NOTE: good verification source is: https://www.dcode.fr/big-numbers-division
 # TODO: maybe integrate new tests like in https://github.com/Jrmy-rbr/inf/blob/master/Test.js
 # TODO: maybe integrate new tests like in https://github.com/gavinhoward/bc/tree/master/tests/bc
 
-do_fullUnitTests()
-do_fullTestsCalc()
-do_heavyTestingCalc()
+def tests(opt = -1):
+    do_fullUnitTests()
+    do_fullTestsCalc()
+    do_heavyTestingCalc()
 
-print()
-print("Total number tests run:", testCount)
-print("Total number of test failed:", failNumber)
-print()
+    print()
+    print("Total number tests run:", testCount)
+    print("Total number of test failed:", failNumber)
+    print()
+
+bench(2)
