@@ -27,19 +27,6 @@ This is equivalent (and is internally converted) to :
 You may need to use another alias instead of `py` for calling python, such as `python` or `python3`, it depends on your env.
 I did not make this a module nor did I added a shebang for linux compatibility, a matter of taste and compatibility.
 
-Bonus context
--------------
-I needed to level up my python knowledge. So I tried to redo a project from my CS school.
-
-Some history of this project.
-
-Base version made in like 4-5 days (6-8 hours), around 40h real time maybe. At first I thought I'd stop there.
-I added a good week of work to handle float properly, debug some cases, double the number of tests and remove `floor()`, `/`, `%` and `*`. At that point there was maybe about 80h of work in total. I unfortunately tried to cut corners to speed the process and it lead me to "monkey patch" things. Then I had to roll back changes (without git at the time...) and think for real to solve problems...this is always a good lesson, always think then try, never try to patch blindly!
-After that I couldn't leave my little toy project like that. So I coded sqrt, pow, factorial, and the chudnovsky method to calculate pi (a good test for the square root algorithm). I also started refactoring my test framework, added options to client. It feelt good tho to have a "cleaner env".
-Now I post my code to github. It'll be easier to maintain it that way, people will be able to participate if they feel like it and recruiters might eventually find that while I'm not working, I hate to be inactive, I'm not binging netflix... (:
-
-To be continued...
-
 Roadmap
 -------
 
