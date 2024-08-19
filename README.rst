@@ -57,9 +57,9 @@ Roadmap
  #. [V] calculate pi using Nilakantha series
  #. [V] pow + factorial + sqrt
  #. [V] calculate pi using the Chudnovsky algorithm
+ #. [V] scientific convention notation (only for end result)
  #. [ ] maybe try poetry so it's easy to have local dependencies in dedicated folders
  #. [ ] make the whole project OOB (or not? or just bistro? maybe tests also?) + refactor agayhn
  #. [ ] variables manipulation (set x 1 or x = 1)
  #. [ ] try to find a clean way to point where there is a mistake in the entry if any
- #. [ ] scientific convention notation
  #. [ ] fraction notation = cos/sin/tan
