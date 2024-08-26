@@ -4,7 +4,7 @@ from advanced import *
 from basic import *
 from calc import *
 
-import time
+import time, tracemalloc
 
 # TODO: improve this barebone test sorta "framework"
 
@@ -603,35 +603,68 @@ def do_fullTestsCalc():
     testMultiply()
     testAdvanced()
 
-def bench(opt = -1):
+def malloc_global_stats(snapshot):
+    snapshot = snapshot.filter_traces((
+        tracemalloc.Filter(False, "<frozen importlib._bootstrap>"),
+        tracemalloc.Filter(False, "<unknown>"),
+    ))
+    total = sum(stat.size for stat in snapshot.statistics('lineno'))
+    return total // 1024
+    # return "Total allocated size: %.1f KiB" % (total / 1024)
+
+
+def bench(opt = -1, take_time = True, malloc = True, loops = 1):
     def _diffTime(t1, t2):
         return f"{t2 - t1:.3f}"
+
+    if malloc:
+        tracemalloc.start()
 
     if opt == -1:
         opt = 4 + 2 + 1
 
-    times = []
-    times.append(("-Global: ", time.time()))
+    if take_time:
+        times = []
+        times.append(("-Global: ", time.time()))
+
+    if malloc:
+        malloc_start = malloc_global_stats(tracemalloc.take_snapshot())
     if opt - 4 >= 0:
         opt -= 4
-        do_fullUnitTests()
-        times.append(("-Unit:   ", time.time()))
+        for _ in range(loops):
+            do_fullUnitTests()
+        if take_time:
+            times.append(("-Unit:   ", time.time()))
     if opt - 2 >= 0:
         opt -= 2
-        do_fullTestsCalc()
-        times.append(("-Full:   ", time.time()))
+        for _ in range(loops):
+            do_fullTestsCalc()
+        if take_time:
+            times.append(("-Full:   ", time.time()))
     if opt - 1 >= 0:
         opt -= 1
-        do_heavyTestingCalc()
-        times.append(("-Heavy:  ", time.time()))
+        for _ in range(loops):
+            do_heavyTestingCalc()
+        if take_time:
+            times.append(("-Heavy:  ", time.time()))
+
+    if malloc:
+        malloc_end = malloc_global_stats(tracemalloc.take_snapshot())
 
     print("### Bench Results ###")
     print("#####################")
-    print(times[0][0]+_diffTime(times[0][1], times[-1][1]))
-    prevTime = times[0][1]
-    for t in times[1:]:
-        print(t[0]+_diffTime(prevTime, t[1]))
-        prevTime = t[1]
+    if take_time:
+        print(times[0][0]+_diffTime(times[0][1], times[-1][1]))
+        prevTime = times[0][1]
+        for t in times[1:]:
+            print(t[0]+_diffTime(prevTime, t[1]))
+            prevTime = t[1]
+
+    if malloc:
+        total_mem = malloc_end - malloc_start
+        # we test on leakage as we take measures before and after operations
+        # if leakage is lower than 10Kb, we consider that there is no leakage
+        print(f"]]]Estim Mem Leakage: {total_mem if total_mem > 10 else 0}Kb")
 
 
 # NOTE: good verification source is: https://www.dcode.fr/big-numbers-division
@@ -648,4 +681,7 @@ def tests(opt = -1):
     print("Total number of test failed:", failNumber)
     print()
 
-bench(2)
+# Testing part
+# TODO: make an arg parser
+if __name__ == "__main__":
+    bench(opt=0)
