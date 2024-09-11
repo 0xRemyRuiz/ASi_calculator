@@ -20,6 +20,27 @@ output = add(res, output)
 with a lot of zeros
 """
 
+def around(num: str, precision: int = 2):
+    if "." in num:
+        pt = num.index(".") + (precision if precision > 0 else 0)
+        if pt < len(num):
+            if num[pt] >= "5":
+                complement = "0."+("0"*precision)+str(10 - int(num[pt]))
+                num = add(num, complement)[:pt + 1]
+            else:
+                complement = "0."+("0"*precision)+num[pt]
+                num = sub(num, complement)[:pt + 1]
+            pt = 0
+            for c in num[::-1]:
+                if c != "0" and c != ".":
+                    break
+                pt += 1
+            num = num[:len(num)-pt]
+    return num
+
+def aabs(a: str):
+    return a[1:] if a[0] == "-" else a
+
 def add(n1: str, n2: str) -> str:
     sign = False
     if n2[0] == "-":

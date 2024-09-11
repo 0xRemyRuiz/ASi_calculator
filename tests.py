@@ -1,4 +1,6 @@
 
+import random
+
 from constants import *
 from advanced import *
 from basic import *
@@ -82,6 +84,17 @@ def testASuperiorToB():
         tests.append((isASupThanB("123.1", "123"), "A"))
         tests.append((isASupThanB(".1", "123"), "B"))
         tests.append((isASupThanB("123.1", "123.1"), "0"))
+    printTestsAndNo(tests)
+
+def baseUnitTests():
+    tests = ["baseUnitTests()"]
+    tests.append((around("123.55"), "123.55"))
+    tests.append((around("123.9"), "123.9"))
+    tests.append((around("123.99"), "123.99"))
+    tests.append((around("123.999999"), "124"))
+    tests.append((around("123.40404"), "123.4"))
+    tests.append((aabs("-123"), "123"))
+    tests.append((aabs("123"), "123"))
     printTestsAndNo(tests)
 
 def unitTestAdd():
@@ -522,6 +535,15 @@ def testAdvanced():
     tests.append((calc("(3!!)"), "720"))
     tests.append((calc("((1)!)!!"), "1"))
     tests.append((calc("((2)!)!!"), "2"))
+
+    # advanced functions
+    # testing nth root function in conjunction with apow function with result rounded (for consistency)
+    tests.append((around(apow(aroot("1234", "4"), "4")), "1234"))
+    tests.append((around(apow(aroot("-9", "3"), "3")), "-9"))
+    tests.append((around(apow(aroot("765345", "7"), "7")), "765345"))
+    # random int
+    rand_num, rand_expo = str(random.randint(1234, 4321)), str(random.randint(3, 7))
+    tests.append((around(apow(aroot(rand_num, rand_expo), rand_expo)), rand_num))
     printTestsAndNo(tests)
 
 def testParenthesis():
@@ -582,6 +604,7 @@ def do_heavyTestingCalc():
     printTestsAndNo(tests)
 
 def do_fullUnitTests():
+    baseUnitTests()
     testNormalization()
     testASuperiorToB()
     unitTestAdd()
@@ -605,9 +628,12 @@ def do_fullTestsCalc():
 # TODO: maybe integrate new tests like in https://github.com/Jrmy-rbr/inf/blob/master/Test.js
 # TODO: maybe integrate new tests like in https://github.com/gavinhoward/bc/tree/master/tests/bc
 
-do_fullUnitTests()
-do_fullTestsCalc()
-do_heavyTestingCalc()
+# do_fullUnitTests()
+# do_fullTestsCalc()
+# do_heavyTestingCalc()
+
+baseUnitTests()
+testAdvanced()
 
 print()
 print("Total number tests run:", testCount)

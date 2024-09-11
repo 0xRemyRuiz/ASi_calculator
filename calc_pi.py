@@ -37,8 +37,6 @@ def calculatePiStepByStep(digitByDigit: bool = True, limit: int = 32):
         else:
             print(buffer, ((d + 1) / 2), end='\r')
 
-# calculatePiStepByStep(False)
-
 # version using native python3 number types
 def calculatePiStepByStep_orig(digitByDigit: bool = True):
     d = 1
@@ -102,8 +100,6 @@ def calculatePiNilakantha(digitByDigit: bool = True, limit: int = 32):
                 lastDigitStableCycle -= 1
         else:
             print(buffer, ((d + 1) / 2), end='\r')
-
-# calculatePiNilakantha(False)
 
 # version using native python3 number types
 def calculatePiNilakantha_orig(digitByDigit: bool = True):
@@ -201,4 +197,6 @@ def achudnovsky(n: str, limit: int = 64) -> str:
 # print(chudnovsky_orig(8))
 
 
+# calculatePiNilakantha(False)
 
+# calculatePiStepByStep(False)

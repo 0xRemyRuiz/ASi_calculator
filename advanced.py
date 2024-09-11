@@ -1,6 +1,42 @@
 
+import random
 from basic import *
 from formatting import *
+
+# TODO: handle negative exponent N
+def aroot(entry: str, N: str, limit: int = 32):
+    # if the root is 2, fall back to long division method for square root (always better than div and conquer)
+    if N == "2":
+        return asqrt(entry, limit)
+
+    sign = False
+    if num[0] == "-":
+        sign = True
+        # TODO: maybe, one day, handle irrational numbers...even tho I don't know how and I don't know enough about them...
+        # if sign is negative but power is even, then the solution is irrational
+        if N[-1] in ["0", "2", "4", "6", "8"]:
+            raise Exception(ERR_irrational)
+        # simply trim the sign before operation
+        num = num[1:]
+
+    # initially guessing a random number between
+    # 0 and 9
+    xPre = str(random.randint(1, 9))
+
+    eps = "0.000001"
+
+    # initializing difference between two roots by a huge value (based on length of entry as we deal with "infinite" numbers)
+    delX = "1"+("0"*len(entry))
+
+    # xK denotes current value of x
+    xK, N_1 = "0", sub(N, "1")
+    while (isASupThanB(delX, eps) == "A"):
+        # calculating current value from previous value by newton's method cf. https://planetmath.org/nthrootbynewtonsmethod
+        xK = div(add(mul(N_1, xPre, False), div(entry, apow(xPre, N_1), False, limit)), N, False, limit)
+        delX = aabs(sub(xK, xPre))
+        xPre = xK
+        
+    return ("-" if sign else "")+xK
 
 # TODO: maybe check apple source code for sqrt (or maybe not)
 # https://opensource.apple.com/source/Libm/Libm-47.1/ppc.subproj/sqrt.c.auto.html
@@ -92,6 +128,8 @@ def afacto(entry: str) -> str:
         entry = sub(entry, "1")
     return buffer
 
+# cf. https://stackoverflow.com/questions/4518011/algorithm-for-powfloat-float
+
 # TODO: make this work by handling above apow(float, float)
 # neperian logarithm formula is $ln(x) = lim[n->INF] n(x^(1/n) - 1)$
 def ln(x):
@@ -104,3 +142,9 @@ def ln(x):
 # This is good
 def log(base, x):
     return div(ln(x), ln(base), False)
+
+
+if __name__ == "__main__":
+    import math
+    print(apow(aroot("1234", "4", 32), "4"))
+
