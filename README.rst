@@ -1,10 +1,13 @@
-ASI toy calculator
+Accurate Simple (yet) infinite Calculator
 ==================
 
 Description
 -----------
 
-This is a toy calculator using only additions and substractions (no `/`, `%` nor `*` operations used) to do "inifinite" calculations (meaning there is no overflow errors).
+The name comes from the fact that all operations are made as if it was done by hand, there is no clever shortcuts like in the invert square root of Carmack.
+Also, this is a toy calculator using only additions and substractions (no `/`, `%` nor `*` operations used) to do "inifinite" calculations (meaning there is no overflow errors).
+The idea was to redo a fun project from my past studies to set me back on track regarding programming and to level my python skills. It has no other purpose than to make me learn and have fun at the sae time.
+No direct contribution is welcome but issues might me read and the code is free to fork, hack, etc...
 
 Usage
 -----
@@ -45,6 +48,7 @@ Roadmap
  #. [V] pow + factorial + sqrt
  #. [V] calculate pi using the Chudnovsky algorithm
  #. [V] scientific convention notation (only for end result)
+ #. [ ] add nth root and log functions
  #. [ ] maybe try poetry so it's easy to have local dependencies in dedicated folders
  #. [ ] make the whole project OOB (or not? or just bistro? maybe tests also?) + refactor agayhn
  #. [ ] variables manipulation (set x 1 or x = 1)

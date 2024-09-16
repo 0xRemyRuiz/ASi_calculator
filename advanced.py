@@ -4,26 +4,26 @@ from basic import *
 from formatting import *
 
 # TODO: handle negative exponent N
+# TODO: move from newton divide and conquer to CORDIC
 def aroot(entry: str, N: str, limit: int = 32):
     # if the root is 2, fall back to long division method for square root (always better than div and conquer)
     if N == "2":
         return asqrt(entry, limit)
 
     sign = False
-    if num[0] == "-":
+    if entry[0] == "-":
         sign = True
         # TODO: maybe, one day, handle irrational numbers...even tho I don't know how and I don't know enough about them...
         # if sign is negative but power is even, then the solution is irrational
         if N[-1] in ["0", "2", "4", "6", "8"]:
             raise Exception(ERR_irrational)
         # simply trim the sign before operation
-        num = num[1:]
+        entry = entry[1:]
 
-    # initially guessing a random number between
-    # 0 and 9
-    xPre = str(random.randint(1, 9))
+    xPre = "5"
+    # xPre = str(random.randint(1, 9))
 
-    eps = "0.000001"
+    eps = "0.00001"
 
     # initializing difference between two roots by a huge value (based on length of entry as we deal with "infinite" numbers)
     delX = "1"+("0"*len(entry))
@@ -133,18 +133,17 @@ def afacto(entry: str) -> str:
 # TODO: make this work by handling above apow(float, float)
 # neperian logarithm formula is $ln(x) = lim[n->INF] n(x^(1/n) - 1)$
 def ln(x):
-    n = 100000000.0 # the biggest this is, the better the precision
+    n = 100.0 # the biggest this is, the better the precision
     return str(n * ((x ** (1/n)) - 1))
-    # TODO: make this work (we're currently cheating)
-    # n = "100000000" # the biggest this is, the better the precision
-    # return sub(mul(n, apow(x, div("1", n, False)), False), "1")
+
+def aln(x):
+    n = "100" # the biggest this is, the better the precision
+    return mul(n, sub(aroot(x, n, 12), "1"), False)
 
 # This is good
 def log(base, x):
     return div(ln(x), ln(base), False)
 
-
 if __name__ == "__main__":
-    import math
-    print(apow(aroot("1234", "4", 32), "4"))
-
+    print(ln(123))
+    print(aln("123"))
