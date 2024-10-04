@@ -4,6 +4,8 @@ from formatting import *
 from basic import *
 from advanced import *
 
+import os
+
 # import pdb; pdb.set_trace()
 
 class AST_node():
@@ -11,6 +13,11 @@ class AST_node():
         self.value = value
         self.isNum = isNum
         self.next = None
+
+class ParsingError(Exception):
+    def __init__(self, message, offset):
+        super().__init__(message)
+        self.offset = offset
 
 # little helper to have a unified way of starting a new chain
 def getAST_head():
@@ -21,10 +28,11 @@ def getAST_head():
 # TODO: add an array of variables with associated values
 def parseInput(node: AST_node, entry: str, convention: int):
     cntOpenedParentheses = 0
-    # change the previous expression if current can be merged
-    num = ""
-    prevC = node.value # convetion here is to have "0 +" expression inserted as head
+    # convetion here is to have "0 +" expression inserted as head
+    # so prevC == "+"
+    prevC, num, i = node.value, "", -1
     for c in iter(entry):
+        i += 1
         # skip all the spaces in any case
         if c == " ": continue
         # if convention is US, skip "," as it is a space character
@@ -72,7 +80,7 @@ def parseInput(node: AST_node, entry: str, convention: int):
                 node.value = "//"
                 continue
             if prevC == "+" or prevC == "-" or prevC == "(" or prevC == "^":
-                raise Exception(ERR_BadOp)
+                raise ParsingError(ERR_BadOp, i)
         elif c == "+":
             if prevC == "*" or prevC == "/":
                 continue # simplify notation
@@ -81,22 +89,18 @@ def parseInput(node: AST_node, entry: str, convention: int):
             elif prevC == "-":
                 # invert logic then continue
                 node.value = "-"
-                # change previous symbol accordingly
-                prevC = "-"
-                continue # invert last entry
+                continue
         elif c == "-":
             if prevC == "+":
-                # invert current sign and pass symbol
                 node.value = "-"
-                # change previous symbol accordingly
+                # simplify notation
                 prevC = "-"
-                continue # simplify notation
+                continue
             elif prevC == "-":
-                # invert logic then continue
                 node.value = "+"
-                # change previous symbol accordingly
+                # invert last entry
                 prevC = "+"
-                continue # invert last entry
+                continue
         elif c == "V":
             # xVy is equal to x * Vy
             if node.isNum:
@@ -105,14 +109,14 @@ def parseInput(node: AST_node, entry: str, convention: int):
         else:
             if not (c == "^" or c == "!"):
                 # if not a number, not a space and not a handled operation char
-                raise Exception(ERR_NaN)
+                raise ParsingError(ERR_NaN, i)
 
         node.next = AST_node(c)
         node = node.next
         prevC = c
 
         if cntOpenedParentheses < 0:
-            raise Exception(ERR_OpPar)
+            raise ParsingError(ERR_OpPar, i)
 
     if num != "":
         if node and node.value == ")":
@@ -121,7 +125,7 @@ def parseInput(node: AST_node, entry: str, convention: int):
         node.next = AST_node(num, True)
 
     if cntOpenedParentheses > 0:
-        raise Exception(ERR_OpPar)
+        raise ParsingError(ERR_OpPar, i)
 
 # TODO: implement a "preResolve" function that would execute in threads all inner parenthesis before resolving the whole
 DEBUG = False
@@ -268,12 +272,26 @@ def resolve(node: AST_node, deepMode: bool = True, limit: int = 32) -> AST_node:
     depth -= 1 
     return AST_node(resultBuffer, True)
 
-def calc(entry: str, convention: int = 1, limit = 32) -> str:
+def calc(prePromptSize: int, entry: str, convention: int = 1, limit: int = 32) -> str:
     head = getAST_head()
 
     resultNode = None
     try:
-        parseInput(head.next, entry, convention)
+        parseInput(head.next, entry, convention) # 2 should be gotten from client
+    except ParsingError as err:
+        if prePromptSize >= 0:
+            n = os.get_terminal_size().columns
+            line_num = (len(entry) + prePromptSize) // n
+            entry = (" "*prePromptSize)+entry
+            i = err.offset+prePromptSize
+            for j in range(line_num + 1):
+                jn = j * n
+                print(entry[jn:jn + n])
+                if i >= jn and i <= jn + n:
+                    print(" "*(i % n - 1)+"~^~")
+        return ERR_prefix+str(err)
+
+    try:
         resultNode = resolve(head, True, limit)
     except Exception as err:
         return ERR_prefix+str(err)

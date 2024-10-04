@@ -44,12 +44,14 @@ if __name__ == "__main__":
     print("You may enter your desired calculation below then press enter to get the result")
     print()
 
+    prePrompt = "> "
+
     convention = 1
     limit = 32
     entry = ""
     while True:
         doCalc = True
-        entry = input("> ")
+        entry = input(prePrompt)
         print()
 
         words = entry.split(" ")
@@ -103,7 +105,7 @@ if __name__ == "__main__":
                 doCalc = False
 
         if doCalc:
-            out = calc(entry, convention, limit)
+            out = calc(len(prePrompt), entry, convention, limit)
             # if the output of calc is an error, print a colored version instead
             if out[:len(ERR_prefix)] == ERR_prefix:
                 printError(out[len(ERR_prefix):])
