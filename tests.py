@@ -289,7 +289,7 @@ def unitTestParsing():
 
     printTestsAndNo(tests)
 
-def debugResolve(entry: str, convention):
+def debugResolve(entry: str, convention: int):
     head = getAST_head()
     parseInput(head.next, entry, convention)
     print("Original parsed chain")
@@ -310,7 +310,7 @@ def debugResolve(entry: str, convention):
     print("=", resultNode.value)
     return resultNode.value
 
-def testResolve(entry: str, convention):
+def testResolve(entry: str, convention: int):
     head = getAST_head()
     parseInput(head.next, entry, convention)
     resultNode = resolve(head, True)
@@ -670,6 +670,8 @@ def bench(opt = -1, take_time = True, malloc = True, loops = 1):
 # NOTE: good verification source is: https://www.dcode.fr/big-numbers-division
 # TODO: maybe integrate new tests like in https://github.com/Jrmy-rbr/inf/blob/master/Test.js
 # TODO: maybe integrate new tests like in https://github.com/gavinhoward/bc/tree/master/tests/bc
+
+# TODO: eventually implement behavior tests simulating client
 
 def tests(opt = -1):
     do_fullUnitTests()
